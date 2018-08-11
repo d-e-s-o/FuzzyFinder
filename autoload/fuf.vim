@@ -361,6 +361,7 @@ function fuf#launch(modeName, initialPattern, partialMatching)
   let s:runningHandler.stats = fuf#loadDataFile(s:runningHandler.getModeName(), 'stats')
   let s:runningHandler.partialMatching = a:partialMatching
   let s:runningHandler.bufNrPrev = bufnr('%')
+  let s:runningHandler.prevWin = win_getid()
   let s:runningHandler.lastCol = -1
   let s:runningHandler.windowRestoringCommand = winrestcmd()
   call s:runningHandler.onModeEnterPre()
@@ -868,10 +869,12 @@ endfunction
 
 "
 function s:handlerBase.onInsertLeave()
+  let winNr = s:runningHandler.prevWin
   unlet s:runningHandler
   let tempVars = l9#tempvariables#getList(s:TEMP_VARIABLES_GROUP)
   call l9#tempvariables#end(s:TEMP_VARIABLES_GROUP)
   call s:deactivateFufBuffer()
+  call win_gotoid(winNr)
   call fuf#saveDataFile(self.getModeName(), 'stats', self.stats)
   execute self.windowRestoringCommand
   let fOpen = exists('s:reservedCommand')
