@@ -385,6 +385,7 @@ function fuf#launch(modeName, initialPattern, partialMatching)
     autocmd CursorMovedI <buffer>        call s:runningHandler.onCursorMovedI()
     autocmd InsertLeave  <buffer> nested call s:runningHandler.onInsertLeave()
   augroup END
+  "noremap <C-C> <Esc>
   for [key, func] in [
         \   [ g:fuf_keyOpen          , 'onCr(' . s:OPEN_TYPE_CURRENT . ')' ],
         \   [ g:fuf_keyOpenSplit     , 'onCr(' . s:OPEN_TYPE_SPLIT   . ')' ],
@@ -393,6 +394,7 @@ function fuf#launch(modeName, initialPattern, partialMatching)
         \   [ '<BS>'                 , 'onBs()'                            ],
         \   [ '<C-h>'                , 'onBs()'                            ],
         \   [ '<C-w>'                , 'onDeleteWord()'                    ],
+        \   [ '<C-c>'                , 'onExit()'                          ],
         \   [ g:fuf_keyPreview       , 'onPreviewBase(1)'                  ],
         \   [ g:fuf_keyNextMode      , 'onSwitchMode(+1)'                  ],
         \   [ g:fuf_keyPrevMode      , 'onSwitchMode(-1)'                  ],
@@ -999,6 +1001,11 @@ function s:handlerBase.onRecallPattern(shift)
     call setline('.', self.getPrompt() . patterns[self.indexRecall])
     call feedkeys("\<End>", 'n')
   endif
+endfunction
+
+"
+function s:handlerBase.onExit()
+  call feedkeys("\<Esc>", 'n')
 endfunction
 
 " }}}1
